@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Resultados da Votação</h1>
+        <div id="resultados-grafico"></div>
+        <button onclick="voltar()">Voltar ao Cadastro</button>
+    </div>
+
+    <script>
+        let eventos = JSON.parse(localStorage.getItem('eventos')) || []; // Recupera eventos do localStorage
+
+        function exibirResultados() {
+            const resultadosGrafico = document.getElementById('resultados-grafico');
+            resultadosGrafico.innerHTML = ''; // Limpa resultados anteriores
+            eventos.forEach((evento) => {
+                const resultadoDiv = document.createElement('div');
+                resultadoDiv.innerHTML = `<h4>${evento.nome}</h4>`;
+                evento.opcoes.forEach((opcao, i) => {
+                    const votosCount = evento.votos[i] || 0; // Contagem de votos
+                    resultadoDiv.innerHTML += `<p>${opcao}: ${votosCount} votos</p>`;
+                });
+                resultadosGrafico.appendChild(resultadoDiv);
+            });
+        }
+
+        function voltar() {
+            window.location.href = 'cadastro.html'; // Redireciona para a página de cadastro
+        }
+
+        // Chama a função para exibir resultados ao carregar a página
+        window.onload = exibirResultados;
+    </script>
+</body>
+</html>

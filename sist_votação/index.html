@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicativo de Votação Dinâmico</title>
+    <style>
+        /* CSS aqui */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3, h4 {
+            color: #4CAF50;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .evento {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        #resultados-grafico {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aplicativo de Votação Dinâmico</h1>
+        <div id="login-container">
+            <form id="login-form" onsubmit="event.preventDefault(); login(username.value, password.value);">
+                <label for="username">Usuário:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Entrar</button>
+            </form>
+            <button onclick="mostrarCadastro();">Cadastrar</button>
+        </div>
+        <div id="cadastro-container" style="display: none;">
+            <h2>Cadastro de Usuário</h2>
+            <form id="cadastro-form" onsubmit="event.preventDefault(); cadastrarUsuario(usernameCadastro.value, passwordCadastro.value);">
+                <label for="usernameCadastro">Usuário:</label>
+                <input type="text" id="usernameCadastro" name="usernameCadastro" required>
+                <label for="passwordCadastro">Senha:</label>
+                <input type="password" id="passwordCadastro" name="passwordCadastro" required>
+                <button type="submit">Cadastrar</button>
+            </form>
+            <button onclick="mostrarLogin();">Voltar ao Login</button>
+        </div>
+        <div id="evento-container" style="display: none;">
+            <h2>Cadastro de Eventos</h2>
+            <form id="evento-form" onsubmit="event.preventDefault(); cadastrarEvento(document.getElementById('evento-nome').value);">
+                <label for="evento-nome">Nome do Evento:</label>
+                <input type="text" id="evento-nome" name="evento-nome" required>
+                <button type="submit">Cadastrar Evento</button>
+            </form>
+        </div>
+        <div id="votacao-container" style="display: none;">
+            <h2>Votação</h2>
+            <div id="votacao-lista"></div>
+            <button onclick="exibirResultados();">Ver Resultados</button>
+        </div>
+        <div id="resultados-container" style="display: none;">
+            <h2>Resultados</h2>
+            <div id="resultados-grafico"></div>
+            <button onclick="logout();">Sair</button>
+        </div>
+        <button id="logout-btn" style="display: none;" onclick="logout();">Sair</button>
+    </div>
+
+    <script>
+        let eventos = [];
+        let votos = {};
+        let usuarios = {}; // Armazenamento de usuários
+        let usuarioLogado = null;
+
+        function login(username, password) {
+            if (usuarios[username] && usuarios[username] === password) {
+                usuarioLogado = username;
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('evento-container').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
+            } else {
+                alert('Usuário ou senha inválidos.');
+            }
+        }
+
+        function cadastrarUsuario(username, password) {
+            if (username && password) {
+                if (usuarios[username]) {
+                    alert('Usuário já existe. Tente outro nome de usuário.');
+                } else {
+                    usuarios[username] = password;
+                    alert('Usuário cadastrado com sucesso!');
+                    mostrarLogin();
+                }
+            } else {
+                alert('Por favor, preencha todos os campos.');
+            }
+        }
+
+        function mostrarCadastro() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('cadastro-container').style.display = 'block';
+        }
+
+        function mostrarLogin() {
+            document.getElementById('cadastro-container').style.display = 'none';
+            document.getElementById('login-container').style.display = 'block';
+        }
+
+        // Função atualizada para cadastrar evento
+        function cadastrarEvento(nome) {
+    if (nome) {
+        const opcoesArray = ['FC Porto', 'Benfica', 'Sporting']; // Opções pré-definidas
+        const evento = { nome, opcoes: opcoesArray, votos: Array(opcoesArray.length).fill(0) };
+        eventos.push(evento);
+        alert('Evento cadastrado com sucesso!');
+        document.getElementById('evento-nome').value = ''; // Limpa o campo de nome do evento
+    } else {
+        alert('Por favor, preencha o nome do evento.');
+    }
+}
+
+        function exibirVotacao() {
+            const votacaoLista = document.getElementById('votacao-lista');
+            votacaoLista.innerHTML = ''; // Limpa a lista antes de adicionar novas opções
+            eventos.forEach((evento, index) => {
+                const eventoDiv = document.createElement('div');
+                eventoDiv.className = 'evento';
+                eventoDiv.innerHTML = `<h3>${evento.nome}</h3>`;
+                evento.opcoes.forEach((opcao, i) => {
+                    const botao = document.createElement('button');
+                    botao.className = 'opcao';
+                    botao.innerText = opcao;
+                    botao.onclick = () => votar(index, i);
+                    eventoDiv.appendChild(botao);
+                });
+                votacaoLista.appendChild(eventoDiv);
+            });
+            document.getElementById('votacao-container').style.display = 'block';
+        }
+
+        function votar(eventoIndex, opcaoIndex) {
+            if (!votos[eventoIndex]) {
+                votos[eventoIndex] = Array(eventos[eventoIndex].opcoes.length).fill(0);
+            }
+            votos[eventoIndex][opcaoIndex]++;
+            alert('Voto registrado com sucesso!');
+        }
+
+        function exibirResultados() {
+            const resultadosGrafico = document.getElementById('resultados-grafico');
+            resultadosGrafico.innerHTML = ''; // Limpa resultados anteriores
+            eventos.forEach((evento, index) => {
+                const resultadoDiv = document.createElement('div');
+                resultadoDiv.innerHTML = `<h4>${evento.nome}</h4>`;
+                evento.opcoes.forEach((opcao, i) => {
+                    const votosCount = votos[index] ? votos[index][i] : 0;
+                    resultadoDiv.innerHTML += `<p>${opcao}: ${votosCount} votos</p>`;
+                });
+                resultadosGrafico.appendChild(resultadoDiv);
+            });
+            document.getElementById('resultados-container').style.display = 'block';
+            document.getElementById('votacao-container').style.display = 'none'; // Oculta a seção de votação
+        }
+
+        function logout() {
+            usuarioLogado = null;
+            eventos = []; // Limpa eventos ao sair
+            votos = {}; // Limpa votos ao sair
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('evento-container').style.display = 'none';
+            document.getElementById('votacao-container').style.display = 'none';
+            document.getElementById('resultados-container').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'none';
+            alert('Você saiu com sucesso.');
+        }
+    </script>
+</body>
+</html>

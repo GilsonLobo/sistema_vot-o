@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado da Votação</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .caixa {
+            background-color: #4CAF50;
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 300px; /* Largura mínima para a caixa */
+            min-height: 200px; /* Altura mínima para a caixa */
+        }
+        ul {
+            list-style-type: none; /* Remove os marcadores da lista */
+            padding: 0; /* Remove o padding padrão */
+        }
+        .botao {
+            display: inline-block;
+            margin-top: 20px; /* Adiciona margem acima do botão */
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none; /* Remove o sublinhado do link */
+        }
+        .botao:hover {
+            background-color: #d32f2f; /* Cor ao passar o mouse */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function mostrarResultados() {
+            const votos = JSON.parse(localStorage.getItem('votos')) || {};
+            const listaResultados = document.getElementById('listaResultados');
+            listaResultados.innerHTML = Object.entries(votos).map(([evento, voto]) => `<li>${evento}: ${voto} voto(s)</li>`).join('');
+            
+            // Criação do gráfico
+            const ctx = document.getElementById('graficoResultados').getContext('2d');
+            const labels = Object.keys(votos);
+            const data = Object.values(votos);
+            
+            new Chart(ctx, {
+                type: 'bar', // Tipo de gráfico
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Votos',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = mostrarResultados;
+    </script>
+</head>
+<body>
+    <div class="caixa">
+        <h1>Resultado da Votação</h1>
+        <ul id="listaResultados"></ul>
+        <canvas id="graficoResultados" width="400" height="200"></canvas>
+        <a href="votacao.html" style="color: white;">Voltar à Votação</a>
+        <br>
+        <a href="login.html" class="botao">Logout</a> <!-- Redireciona para a página de login -->
+    </div>
+</body>
+</html>

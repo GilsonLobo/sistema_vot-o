@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votação</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('imagem/fote1.jpg'); /* Adicione sua imagem de fundo aqui */
+            background-size: cover; /* Faz a imagem cobrir toda a tela */
+            background-position: center; /* Centraliza a imagem */
+        }
+        .caixa {
+            background-color: rgba(76, 175, 80, 0.9); /* Cor verde com leve transparência */
+            color: white;
+            padding: 40px; /* Ajustado para melhor proporção */
+            border-radius: 8px;
+            text-align: center;
+            width: 300px; /* Largura da caixa ajustada */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para profundidade */
+        }
+        img {
+            width: 100px; /* Tamanho da imagem, ajuste conforme necessário */
+            margin-bottom: 20px; /* Espaço abaixo da imagem */
+        }
+    </style>
+    <script>
+        let eventos = JSON.parse(localStorage.getItem('eventos')) || [];
+        let votos = {};
+
+        function votar(evento) {
+            if (votos[evento.nome]) {
+                votos[evento.nome]++;
+            } else {
+                votos[evento.nome] = 1;
+            }
+            localStorage.setItem('votos', JSON.stringify(votos));
+            alert(`Você votou em: ${evento.nome}`);
+        }
+
+        function mostrarEventos() {
+            const listaEventos = document.getElementById('listaEventos');
+            listaEventos.innerHTML = eventos.map(evento => 
+                `<li>${evento.nome} 
+                <ul>
+                    ${evento.opcoes.map(opcao => 
+                        `<li>${opcao.nome} <button onclick="votar({nome: '${evento.nome}'})">Votar</button></li>`
+                    ).join('')}
+                </ul>
+                </li>`
+            ).join('');
+        }
+        
+        window.onload = mostrarEventos;
+    </script>
+</head>
+<body>
+    <div class="caixa">
+        
+        <h1>Votação</h1>
+        <ul id="listaEventos"></ul>
+        <a href="resultado.html" style="color: white;">Ver Resultados</a>
+    </div>
+</body>
+</html>
+

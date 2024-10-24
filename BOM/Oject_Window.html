@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        console.log(window)
+        
+        let url = window.open("https://www.ojogo.pt/edicao-do-dia/");
+
+        window.setTimeout(function() {
+    console.log("Executado uma vez após 3 segundos.");
+}, 3000);
+
+let contador = 0;
+let intervalID = setInterval(function() {
+    contador++;
+    console.log("Executado a cada 2 segundos. Contador: " + contador);
+    if (contador === 5) {
+        clearInterval(intervalID);  // Para após 5 execuções
+    }
+}, 2000);
+
+let info = `Largura da Tela: ${screen.width}px<br>
+                    Altura da Tela: ${screen.height}px<br>
+                    Largura Disponível: ${screen.availWidth}px<br>
+                    Altura Disponível: ${screen.availHeight}px<br>
+                    Profundidade de Cor: ${screen.colorDepth} bits`;
+        
+        document.getElementById("info").innerHTML = info;
+        console.log (info)
+
+        const navegador = navigator.userAgent;
+if (navegador.includes("Chrome")) {
+  console.log("O usuário está usando o Google Chrome");
+} else if (navegador.includes("Firefox")) {
+  console.log("O usuário está usando o Mozilla Firefox");
+} else {
+  console.log("O usuário está usando outro navegador");
+}
+
+     </script>   
+</body>
+</html>

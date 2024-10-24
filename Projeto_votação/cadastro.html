@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Cadastro</h1>
+        <form id="cadastro-form" onsubmit="event.preventDefault(); fazerCadastro();">
+            <label for="new-username">Usuário:</label>
+            <input type="text" id="new-username" name="new-username" required>
+            <label for="new-password">Senha:</label>
+            <input type="password" id="new-password" name="new-password" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <div id="cadastro-mensagem" style="color: green;"></div>
+        
+        <p>Já tem uma conta? <a href="login.html">Faça login aqui</a></p>
+    </div>
+
+    <script>
+        function fazerCadastro() {
+            const novoUsuario = document.getElementById('new-username').value;
+            const novaSenha = document.getElementById('new-password').value;
+
+            // Armazenar o novo usuário no localStorage
+            localStorage.setItem('usuario', novoUsuario);
+            localStorage.setItem('senha', novaSenha);
+
+            document.getElementById('cadastro-mensagem').innerText = 'Cadastro realizado com sucesso!';
+            // Redirecionar para a página de login após o cadastro
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

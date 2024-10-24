@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Evento</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('imagem/fote.webp'); /* Adicione sua imagem aqui */
+            background-size: cover; /* Faz a imagem cobrir toda a tela */
+            background-position: center; /* Centraliza a imagem */
+        }
+        .caixa {
+            background-color: rgba(255, 255, 255, 0.9); /* Cor branca com leve transparência */
+            color: #333; /* Cor do texto mais escura para contraste */
+            padding: 70px;
+            border-radius: 8px;
+            text-align: center;
+            width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidade */
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc; /* Borda sutil */
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #FF5722; /* Cor do botão */
+            color: white; /* Cor do texto do botão */
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e64a19; /* Cor do botão ao passar o mouse */
+        }
+        .opcoes-container {
+            margin-top: 10px;
+            text-align: left;
+        }
+    </style>
+    <script>
+        let eventos = [];
+        let opcoes = [];
+
+        function adicionarEvento() {
+            const eventoInput = document.getElementById('evento');
+            const eventoNome = eventoInput.value.trim();
+
+            if (eventoNome && opcoes.length > 0) {
+                eventos.push({ nome: eventoNome, opcoes: opcoes.map(opcao => ({ nome: opcao, votos: 0 })) });
+                eventoInput.value = '';
+                opcoes = [];
+                atualizarEventos();
+                document.getElementById('opcoesContainer').innerHTML = '';
+                adicionarOpcao();
+            } else {
+                alert("Por favor, preencha o nome do evento e adicione ao menos uma opção de votação.");
+            }
+        }
+
+        function atualizarEventos() {
+            const listaEventos = document.getElementById('listaEventos');
+            listaEventos.innerHTML = eventos.map(evento => 
+                `<li>${evento.nome} 
+                <ul>
+                    ${evento.opcoes.map(opcao => 
+                        `<li>${opcao.nome} - Votos: ${opcao.votos}</li>`
+                    ).join('')}
+                </ul>
+                </li>`
+            ).join('');
+        }
+
+        function cadastrar() {
+            localStorage.setItem('eventos', JSON.stringify(eventos));
+            window.location.href = 'votacao.html';
+        }
+
+        function adicionarOpcao() {
+            const novaOpcaoInput = document.createElement('input');
+            novaOpcaoInput.type = 'text';
+            novaOpcaoInput.placeholder = 'Nova Opção de Votação';
+            novaOpcaoInput.className = 'opcao-input';
+            novaOpcaoInput.onchange = () => {
+                const valor = novaOpcaoInput.value.trim();
+                if (valor && !opcoes.includes(valor)) {
+                    opcoes.push(valor);
+                    atualizarOpcoes();
+                }
+            };
+            document.getElementById('opcoesContainer').appendChild(novaOpcaoInput);
+        }
+
+        function atualizarOpcoes() {
+            const opcoesInput = document.getElementById('opcoesContainer');
+            opcoesInput.innerHTML = '';
+            for (const opcao of opcoes) {
+                const li = document.createElement('li');
+                li.textContent = opcao;
+                opcoesInput.appendChild(li);
+            }
+        }
+
+        window.onload = adicionarOpcao;
+    </script>
+</head>
+<body>
+    <div class="caixa">
+        <h1>Cadastro de Evento</h1>
+        <input type="text" id="evento" placeholder="Nome do Evento">
+        <div id="opcoesContainer" class="opcoes-container"></div>
+        <button onclick="adicionarOpcao()">Adicionar Opção de Votação</button>
+        <button onclick="adicionarEvento()">Adicionar Evento</button>
+        <ul id="listaEventos"></ul>
+        <button onclick="cadastrar()">Cadastrar</button>
+    </div>
+</body>
+</html>
